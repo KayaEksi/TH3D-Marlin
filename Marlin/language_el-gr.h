@@ -24,7 +24,7 @@
  * Greek (Greece)
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_EL_GR_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_CECF
 #define DISPLAY_CHARSET_ISO10646_GREEK
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" έτοιμο.")
 #define MSG_SD_INSERTED                     _UxGT("Εισαγωγή κάρτας")
@@ -49,6 +48,7 @@
 #define MSG_LEVEL_BED_WAITING               _UxGT("Κάντε κλικ για να ξεκινήσετε")
 #define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Επόμενο σημείο")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Ολοκλήρωση επιπεδοποίησης!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Ακύρωση")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Ορισμός βασικών μετατοπίσεων")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Εφαρμόστηκαν οι μετατοπίσεις")
 #define MSG_SET_ORIGIN                      _UxGT("Ορισμός προέλευσης")
@@ -68,7 +68,6 @@
 #define MSG_EXTRUDE                         _UxGT("Εξώθηση")
 #define MSG_RETRACT                         _UxGT("Ανάσυρση")
 #define MSG_MOVE_AXIS                       _UxGT("Μετακίνηση άξονα")
-#define MSG_BED_LEVELING                    _UxGT("Επιπεδοποίηση κλίνης")
 #define MSG_LEVEL_BED                       _UxGT("Επιπεδοποίηση κλίνης")
 #define MSG_MOVE_X                          _UxGT("Μετακίνηση X")
 #define MSG_MOVE_Y                          _UxGT("Μετακίνηση Y")
@@ -95,34 +94,19 @@
 #define MSG_PID_D                           _UxGT("PID-D")
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_ACC                             _UxGT("Επιτάχυνση")
-#define MSG_JERK                            _UxGT("Vαντίδραση")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Vαντίδραση A")
-  #define MSG_VB_JERK                       _UxGT("Vαντίδραση B")
-  #define MSG_VC_JERK                       _UxGT("Vαντίδραση C")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vαντίδραση X")
-  #define MSG_VB_JERK                       _UxGT("Vαντίδραση Y")
-  #define MSG_VC_JERK                       _UxGT("Vαντίδραση Z")
-#endif
-#define MSG_VE_JERK                         _UxGT("Vαντίδραση E")
+#define MSG_VX_JERK                         _UxGT("Vαντίδραση x")
+#define MSG_VY_JERK                         _UxGT("Vαντίδραση y")
+#define MSG_VZ_JERK                         _UxGT("Vαντίδραση z")
+#define MSG_VE_JERK                         _UxGT("Vαντίδραση e")
 #define MSG_VMAX                            _UxGT("Vμεγ ")
 #define MSG_VMIN                            _UxGT("Vελαχ")
 #define MSG_VTRAV_MIN                       _UxGT("Vελάχ. μετατόπιση")
-#define MSG_ACCELERATION                    MSG_ACC
 #define MSG_AMAX                            _UxGT("Aμεγ ")
 #define MSG_A_RETRACT                       _UxGT("Α-ανάσυρση")
 #define MSG_A_TRAVEL                        _UxGT("Α-μετατόπιση")
-#define MSG_STEPS_PER_MM                    _UxGT("Bήματα ανά μμ")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Bήματα A ανά μμ")
-  #define MSG_BSTEPS                        _UxGT("Bήματα B ανά μμ")
-  #define MSG_CSTEPS                        _UxGT("Bήματα C ανά μμ")
-#else
-  #define MSG_ASTEPS                        _UxGT("Bήματα X ανά μμ")
-  #define MSG_BSTEPS                        _UxGT("Bήματα Y ανά μμ")
-  #define MSG_CSTEPS                        _UxGT("Bήματα Z ανά μμ")
-#endif
+#define MSG_XSTEPS                          _UxGT("Bήματα X ανά μμ")
+#define MSG_YSTEPS                          _UxGT("Bήματα Υ ανά μμ")
+#define MSG_ZSTEPS                          _UxGT("Bήματα Ζ ανά μμ")
 #define MSG_ESTEPS                          _UxGT("Bήματα Ε ανά μμ")
 #define MSG_E1STEPS                         _UxGT("Bήματα Ε1 ανά μμ")
 #define MSG_E2STEPS                         _UxGT("Bήματα Ε2 ανά μμ")

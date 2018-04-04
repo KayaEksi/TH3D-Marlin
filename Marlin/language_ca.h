@@ -24,7 +24,7 @@
  * Catalan
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_CA_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_C2C3  // because of "ó"
 #define DISPLAY_CHARSET_ISO10646_1
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" preparada.")
 #define MSG_SD_INSERTED                     _UxGT("Targeta detectada.")
@@ -51,6 +50,7 @@
 #define MSG_LEVEL_BED_WAITING               _UxGT("Premeu per iniciar")
 #define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Següent punt")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Anivellament fet!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Cancel.la")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Ajusta decalatge")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Decalatge aplicat")
 #define MSG_SET_ORIGIN                      _UxGT("Estableix origen")
@@ -70,7 +70,6 @@
 #define MSG_EXTRUDE                         _UxGT("Extrudeix")
 #define MSG_RETRACT                         _UxGT("Retreu")
 #define MSG_MOVE_AXIS                       _UxGT("Mou eixos")
-#define MSG_BED_LEVELING                    _UxGT("Anivella llit")
 #define MSG_LEVEL_BED                       _UxGT("Anivella llit")
 #define MSG_MOVING                          _UxGT("Movent..")
 #define MSG_FREE_XY                         _UxGT("XY lliures")
@@ -100,16 +99,9 @@
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_SELECT                          _UxGT("Select")
 #define MSG_ACC                             _UxGT("Accel")
-#define MSG_JERK                            _UxGT("Jerk")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Va-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vb-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vc-jerk")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vx-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vy-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vz-jerk")
-#endif
+#define MSG_VX_JERK                         _UxGT("Vx-jerk")
+#define MSG_VY_JERK                         _UxGT("Vy-jerk")
+#define MSG_VZ_JERK                         _UxGT("Vz-jerk")
 #define MSG_VE_JERK                         _UxGT("Ve-jerk")
 #define MSG_VMAX                            _UxGT("Vmax ")
 #define MSG_VMIN                            _UxGT("Vmin")
@@ -117,16 +109,9 @@
 #define MSG_AMAX                            _UxGT("Accel. max ")
 #define MSG_A_RETRACT                       _UxGT("Accel. retracc")
 #define MSG_A_TRAVEL                        _UxGT("Accel. Viatge")
-#define MSG_STEPS_PER_MM                    _UxGT("Passos/mm")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Apassos/mm")
-  #define MSG_BSTEPS                        _UxGT("Bpassos/mm")
-  #define MSG_CSTEPS                        _UxGT("Cpassos/mm")
-#else
-  #define MSG_ASTEPS                        _UxGT("Xpassos/mm")
-  #define MSG_BSTEPS                        _UxGT("Ypassos/mm")
-  #define MSG_CSTEPS                        _UxGT("Zpassos/mm")
-#endif
+#define MSG_XSTEPS                          _UxGT("Xpassos/mm")
+#define MSG_YSTEPS                          _UxGT("Ypassos/mm")
+#define MSG_ZSTEPS                          _UxGT("Zpassos/mm")
 #define MSG_ESTEPS                          _UxGT("Epassos/mm")
 #define MSG_E1STEPS                         _UxGT("E1passos/mm")
 #define MSG_E2STEPS                         _UxGT("E2passos/mm")
@@ -185,7 +170,7 @@
 #define MSG_ERR_MINTEMP                     _UxGT("Err: TEMP MINIMA")
 #define MSG_ERR_MAXTEMP_BED                 _UxGT("Err: TEMPMAX LLIT")
 #define MSG_ERR_MINTEMP_BED                 _UxGT("Err: TEMPMIN LLIT")
-#define MSG_ERR_Z_HOMING                    MSG_HOME _UxGT(" ") MSG_X MSG_Y _UxGT(" ") MSG_FIRST
+#define MSG_ERR_Z_HOMING                    _UxGT("G28 Z No permes")
 #define MSG_HALTED                          _UxGT("IMPRESSORA PARADA")
 #define MSG_PLEASE_RESET                    _UxGT("Reinicieu")
 #define MSG_SHORT_DAY                       _UxGT("d") // One character only
@@ -209,7 +194,8 @@
 #define MSG_INFO_EXTRUDERS                  _UxGT("Extrusors")
 #define MSG_INFO_BAUDRATE                   _UxGT("Baud")
 #define MSG_INFO_PROTOCOL                   _UxGT("Protocol")
-#define MSG_CASE_LIGHT                      _UxGT("Llum")
+#define MSG_LIGHTS_ON                       _UxGT("Encen el llum")
+#define MSG_LIGHTS_OFF                      _UxGT("Apaga el llum")
 
 #if LCD_WIDTH >= 20
   #define MSG_INFO_PRINT_COUNT              _UxGT("Total impressions")
@@ -232,7 +218,11 @@
 #define MSG_DRIVE_STRENGTH                  _UxGT("Força motor")
 #define MSG_DAC_PERCENT                     _UxGT("Driver %")
 #define MSG_DAC_EEPROM_WRITE                _UxGT("DAC EEPROM Write")
+#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("CANVI DE FILAMENT")
+#define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("OPCIONS CANVI:")
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Extrudeix mes")
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Repren impressió")
+#define MSG_FILAMENT_CHANGE_MINTEMP         _UxGT("Temp minima es ")
 
 //
 // Filament Change screens show up to 3 lines on a 4-line display
@@ -253,6 +243,8 @@
   #define MSG_FILAMENT_CHANGE_HEATING_2       _UxGT("Espereu...")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Esperant carrega")
   #define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("de filament")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Esperant per")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("extreure filament")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Esperant per")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("reprendre")
 #else // LCD_HEIGHT < 4
@@ -261,6 +253,7 @@
   #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Insereix i prem")
   #define MSG_FILAMENT_CHANGE_HEATING_1       _UxGT("Escalfant...")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Carregant...")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Extrudint...")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Reprenent...")
 #endif // LCD_HEIGHT < 4
 

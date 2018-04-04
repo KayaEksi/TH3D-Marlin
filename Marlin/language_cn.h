@@ -24,14 +24,20 @@
  * Chinese
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_CN_H
 #define LANGUAGE_CN_H
 
 #define DISPLAY_CHARSET_ISO10646_CN
-#define CHARSIZE 2
+#define BOOTSCREENNAME                      "\xa1\xa2\xa3\xa4"
+#define MSG_XD_INFO							"\x7f\x80\x81\x82\x83\x84\x85\x86"
+#define MSG_XD_CONTINUE						"\x87\x88\x89\x8a"
+#define MSG_XD_CANCLE						"\x8b\x8c\x8d\x8e"
+#define MSG_XD_USE							"\x8f\x90\x91\x92\x93\x94\x95"
+#define MSG_XD_3DPTOOLS						"\x96\x97\x98\x99\x9a\x9a\x9b\x9c"
+#define MSG_XD_OPERATE						"\x9d\x9e\x9f\xa0"
 
 #define WELCOME_MSG                         "\xa4\xa5\xa6\xa7"
 #define MSG_SD_INSERTED                     "\xa8\xa9\xaa\xab"
@@ -43,6 +49,7 @@
 #define MSG_LEVEL_BED_HOMING                "Homing XYZ"
 #define MSG_LEVEL_BED_WAITING               "Click to Begin"
 #define MSG_LEVEL_BED_DONE                  "Leveling Done!"
+#define MSG_LEVEL_BED_CANCEL                "Cancel"
 #define MSG_SET_HOME_OFFSETS                "\xbe\xbf\xbb\xbc\xbd\xc0\xc1"
 #define MSG_HOME_OFFSETS_APPLIED            "Offsets applied"
 #define MSG_SET_ORIGIN                      "\xbe\xbf\xbc\xbd"
@@ -62,7 +69,6 @@
 #define MSG_EXTRUDE                         "\xcc\xad"
 #define MSG_RETRACT                         "\xbb\xcd"
 #define MSG_MOVE_AXIS                       "\xc1\xb2\xce"
-#define MSG_BED_LEVELING                    "\xcf\xe0\xc4\xc7"
 #define MSG_LEVEL_BED                       "\xcf\xe0\xc4\xc7"
 #define MSG_MOVE_X                          "\xc1\xb2 X"
 #define MSG_MOVE_Y                          "\xc1\xb2 Y"
@@ -88,16 +94,9 @@
 #define MSG_PID_D                           "PID-D"
 #define MSG_PID_C                           "PID-C"
 #define MSG_ACC                             "Accel"
-#define MSG_JERK                            "Jerk"
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       "Va-jerk"
-  #define MSG_VB_JERK                       "Vb-jerk"
-  #define MSG_VC_JERK                       "Vc-jerk"
-#else
-  #define MSG_VA_JERK                       "Vx-jerk"
-  #define MSG_VB_JERK                       "Vy-jerk"
-  #define MSG_VC_JERK                       "Vz-jerk"
-#endif
+#define MSG_VX_JERK                         "Vx-jerk"
+#define MSG_VY_JERK                         "Vy-jerk"
+#define MSG_VZ_JERK                         "Vz-jerk"
 #define MSG_VE_JERK                         "Ve-jerk"
 #define MSG_VMAX                            "Vmax "
 #define MSG_VMIN                            "Vmin"
@@ -105,7 +104,9 @@
 #define MSG_AMAX                            "Amax "
 #define MSG_A_RETRACT                       "A-retract"
 #define MSG_A_TRAVEL                        "A-travel"
-#define MSG_STEPS_PER_MM                    "Steps/mm"
+#define MSG_XSTEPS                          "Xsteps/mm"
+#define MSG_YSTEPS                          "Ysteps/mm"
+#define MSG_ZSTEPS                          "Zsteps/mm"
 #define MSG_ESTEPS                          "Esteps/mm"
 #define MSG_E1STEPS                         "E1steps/mm"
 #define MSG_E2STEPS                         "E2steps/mm"

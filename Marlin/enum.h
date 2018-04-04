@@ -33,33 +33,24 @@
  *  - X_HEAD and Y_HEAD is used for systems that don't have a 1:1 relationship
  *    between X_AXIS and X Head movement, like CoreXY bots
  */
-enum AxisEnum : unsigned char {
-  X_AXIS    = 0,
-  A_AXIS    = 0,
-  Y_AXIS    = 1,
-  B_AXIS    = 1,
-  Z_AXIS    = 2,
-  C_AXIS    = 2,
-  E_AXIS    = 3,
-  X_HEAD    = 4,
-  Y_HEAD    = 5,
-  Z_HEAD    = 6,
-  ALL_AXES  = 0xFE,
-  NO_AXIS   = 0xFF
+enum AxisEnum {
+  NO_AXIS = -1,
+  X_AXIS  = 0,
+  A_AXIS  = 0,
+  Y_AXIS  = 1,
+  B_AXIS  = 1,
+  Z_AXIS  = 2,
+  C_AXIS  = 2,
+  E_AXIS  = 3,
+  X_HEAD  = 4,
+  Y_HEAD  = 5,
+  Z_HEAD  = 6,
+  ALL_AXES = 100
 };
 
-#define LOOP_S_LE_N(VAR, S, N) for (uint8_t VAR=S; VAR<=N; VAR++)
-#define LOOP_S_L_N(VAR, S, N) for (uint8_t VAR=S; VAR<N; VAR++)
-#define LOOP_LE_N(VAR, N) LOOP_S_LE_N(VAR, 0, N)
-#define LOOP_L_N(VAR, N) LOOP_S_L_N(VAR, 0, N)
-
-#define LOOP_NA(VAR) LOOP_L_N(VAR, NUM_AXIS)
-#define LOOP_XYZ(VAR) LOOP_S_LE_N(VAR, X_AXIS, Z_AXIS)
-#define LOOP_XYZE(VAR) LOOP_S_LE_N(VAR, X_AXIS, E_AXIS)
-#define LOOP_XYZE_N(VAR) LOOP_S_L_N(VAR, X_AXIS, XYZE_N)
-#define LOOP_ABC(VAR) LOOP_S_LE_N(VAR, A_AXIS, C_AXIS)
-#define LOOP_ABCE(VAR) LOOP_S_LE_N(VAR, A_AXIS, E_AXIS)
-#define LOOP_ABCE_N(VAR) LOOP_S_L_N(VAR, A_AXIS, XYZE_N)
+#define LOOP_XYZ(VAR)  for (uint8_t VAR=X_AXIS; VAR<=Z_AXIS; VAR++)
+#define LOOP_XYZE(VAR) for (uint8_t VAR=X_AXIS; VAR<=E_AXIS; VAR++)
+#define LOOP_XYZE_N(VAR) for (uint8_t VAR=X_AXIS; VAR<XYZE_N; VAR++)
 
 typedef enum {
   LINEARUNIT_MM,
@@ -76,7 +67,7 @@ typedef enum {
  * Debug flags
  * Not yet widely applied
  */
-enum DebugFlags : unsigned char {
+enum DebugFlags {
   DEBUG_NONE          = 0,
   DEBUG_ECHO          = _BV(0), ///< Echo commands in order as they are processed
   DEBUG_INFO          = _BV(1), ///< Print messages for code that has debug output
@@ -88,7 +79,7 @@ enum DebugFlags : unsigned char {
   DEBUG_ALL           = 0xFF
 };
 
-enum EndstopEnum : char {
+enum EndstopEnum {
   X_MIN,
   Y_MIN,
   Z_MIN,
@@ -96,16 +87,12 @@ enum EndstopEnum : char {
   X_MAX,
   Y_MAX,
   Z_MAX,
-  X2_MIN,
-  X2_MAX,
-  Y2_MIN,
-  Y2_MAX,
   Z2_MIN,
   Z2_MAX
 };
 
 #if ENABLED(EMERGENCY_PARSER)
-  enum e_parser_state : char {
+  enum e_parser_state {
     state_RESET,
     state_N,
     state_M,
@@ -121,33 +108,27 @@ enum EndstopEnum : char {
   };
 #endif
 
-#if ENABLED(ADVANCED_PAUSE_FEATURE)
-  enum AdvancedPauseMenuResponse : char {
-    ADVANCED_PAUSE_RESPONSE_WAIT_FOR,
-    ADVANCED_PAUSE_RESPONSE_EXTRUDE_MORE,
-    ADVANCED_PAUSE_RESPONSE_RESUME_PRINT
+#if ENABLED(FILAMENT_CHANGE_FEATURE)
+  enum FilamentChangeMenuResponse {
+    FILAMENT_CHANGE_RESPONSE_WAIT_FOR,
+    FILAMENT_CHANGE_RESPONSE_EXTRUDE_MORE,
+    FILAMENT_CHANGE_RESPONSE_RESUME_PRINT
   };
 
   #if ENABLED(ULTIPANEL)
-    enum AdvancedPauseMessage : char {
-      ADVANCED_PAUSE_MESSAGE_INIT,
-      ADVANCED_PAUSE_MESSAGE_UNLOAD,
-      ADVANCED_PAUSE_MESSAGE_INSERT,
-      ADVANCED_PAUSE_MESSAGE_LOAD,
-      ADVANCED_PAUSE_MESSAGE_PURGE,
-      ADVANCED_PAUSE_MESSAGE_OPTION,
-      ADVANCED_PAUSE_MESSAGE_RESUME,
-      ADVANCED_PAUSE_MESSAGE_STATUS,
-      ADVANCED_PAUSE_MESSAGE_CLICK_TO_HEAT_NOZZLE,
-      ADVANCED_PAUSE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT
+    enum FilamentChangeMessage {
+      FILAMENT_CHANGE_MESSAGE_INIT,
+      FILAMENT_CHANGE_MESSAGE_UNLOAD,
+      FILAMENT_CHANGE_MESSAGE_INSERT,
+      FILAMENT_CHANGE_MESSAGE_LOAD,
+      FILAMENT_CHANGE_MESSAGE_EXTRUDE,
+      FILAMENT_CHANGE_MESSAGE_OPTION,
+      FILAMENT_CHANGE_MESSAGE_RESUME,
+      FILAMENT_CHANGE_MESSAGE_STATUS,
+      FILAMENT_CHANGE_MESSAGE_CLICK_TO_HEAT_NOZZLE,
+      FILAMENT_CHANGE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT
     };
   #endif
-
-  enum AdvancedPauseMode : char {
-    ADVANCED_PAUSE_MODE_PAUSE_PRINT,
-    ADVANCED_PAUSE_MODE_LOAD_FILAMENT,
-    ADVANCED_PAUSE_MODE_UNLOAD_FILAMENT
-  };
 #endif
 
 /**
@@ -155,7 +136,7 @@ enum EndstopEnum : char {
  * Marlin sends messages if blocked or busy
  */
 #if ENABLED(HOST_KEEPALIVE_FEATURE)
-  enum MarlinBusyState : char {
+  enum MarlinBusyState {
     NOT_BUSY,           // Not in a handler
     IN_HANDLER,         // Processing a GCode
     IN_PROCESS,         // Known to be blocking command input (as in G29)
@@ -167,12 +148,12 @@ enum EndstopEnum : char {
 /**
  * SD Card
  */
-enum LsAction : char { LS_SerialPrint, LS_Count, LS_GetFilename };
+enum LsAction { LS_SerialPrint, LS_Count, LS_GetFilename };
 
 /**
  * Ultra LCD
  */
-enum LCDViewAction : char {
+enum LCDViewAction {
   LCDVIEW_NONE,
   LCDVIEW_REDRAW_NOW,
   LCDVIEW_CALL_REDRAW_NEXT,
@@ -180,23 +161,12 @@ enum LCDViewAction : char {
   LCDVIEW_CALL_NO_REDRAW
 };
 
-/**
- * Dual X Carriage modes. A Dual Nozzle can also do duplication.
- */
 #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
-  enum DualXMode : char {
-    DXC_FULL_CONTROL_MODE,  // DUAL_X_CARRIAGE only
-    DXC_AUTO_PARK_MODE,     // DUAL_X_CARRIAGE only
+  enum DualXMode {
+    DXC_FULL_CONTROL_MODE,
+    DXC_AUTO_PARK_MODE,
     DXC_DUPLICATION_MODE
   };
-#endif
-
-/**
- * Workspace planes only apply to G2/G3 moves
- * (and "canned cycles" - not a current feature)
- */
-#if ENABLED(CNC_WORKSPACE_PLANES)
-  enum WorkspacePlane : char { PLANE_XY, PLANE_ZX, PLANE_YZ };
 #endif
 
 #endif // __ENUM_H__

@@ -22,18 +22,15 @@
 
 /**
  * Portuguese (Brazil)
- * UTF-8 for Graphical Display
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_PT_BR_UTF_H
 #define LANGUAGE_PT_BR_UTF_H
 
-#define MAPPER_C2C3
 #define DISPLAY_CHARSET_ISO10646_1
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" pronto.")
 #define MSG_SD_INSERTED                     _UxGT("Cartão inserido")
@@ -45,6 +42,7 @@
 #define MSG_LEVEL_BED_HOMING                _UxGT("Indo para origem")
 #define MSG_LEVEL_BED_WAITING               _UxGT("Click to Begin")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Leveling Done!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Cancel")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Ajustar Jogo")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Offsets applied")
 #define MSG_SET_ORIGIN                      _UxGT("Ajustar orig.")
@@ -89,16 +87,9 @@
 #define MSG_PID_D                           _UxGT("PID-D")
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_ACC                             _UxGT("Acc")
-#define MSG_JERK                            _UxGT("Jogo")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("jogo VA")
-  #define MSG_VB_JERK                       _UxGT("jogo VB")
-  #define MSG_VC_JERK                       _UxGT("jogo VC")
-#else
-  #define MSG_VA_JERK                       _UxGT("jogo VX")
-  #define MSG_VB_JERK                       _UxGT("jogo VY")
-  #define MSG_VC_JERK                       _UxGT("jogo VZ")
-#endif
+#define MSG_VX_JERK                         _UxGT("jogo VX")
+#define MSG_VY_JERK                         _UxGT("jogo VY")
+#define MSG_VZ_JERK                         _UxGT("jogo VZ")
 #define MSG_VE_JERK                         _UxGT("jogo VE")
 #define MSG_VMAX                            _UxGT(" Vmax ")
 #define MSG_VMIN                            _UxGT("Vmin")
@@ -106,16 +97,9 @@
 #define MSG_AMAX                            _UxGT("Amax ")
 #define MSG_A_RETRACT                       _UxGT("Retrair A")
 #define MSG_A_TRAVEL                        _UxGT("A-movimento")
-#define MSG_STEPS_PER_MM                    _UxGT("Passo/mm")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("A/mm")
-  #define MSG_BSTEPS                        _UxGT("B/mm")
-  #define MSG_CSTEPS                        _UxGT("C/mm")
-#else
-  #define MSG_ASTEPS                        _UxGT("X/mm")
-  #define MSG_BSTEPS                        _UxGT("Y/mm")
-  #define MSG_CSTEPS                        _UxGT("Z/mm")
-#endif
+#define MSG_XSTEPS                          _UxGT("Passo X/mm")
+#define MSG_YSTEPS                          _UxGT("Passo Y/mm")
+#define MSG_ZSTEPS                          _UxGT("Passo Z/mm")
 #define MSG_ESTEPS                          _UxGT("E/mm")
 #define MSG_E1STEPS                         _UxGT("E1/mm")
 #define MSG_E2STEPS                         _UxGT("E2/mm")

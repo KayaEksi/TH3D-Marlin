@@ -38,14 +38,11 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#include "MarlinConfig.h"
+#include <math.h>
+#include "Marlin.h"
 
 #if HAS_ABL
-
 #include "vector_3.h"
-#include "serial.h"
-#include <math.h>
 
 vector_3::vector_3() : x(0), y(0), z(0) { }
 
@@ -66,7 +63,7 @@ vector_3 vector_3::get_normal() {
   return normalized;
 }
 
-float vector_3::get_length() { return SQRT(sq(x) + sq(y) + sq(z)); }
+float vector_3::get_length() { return sqrt(sq(x) + sq(y) + sq(z)); }
 
 void vector_3::normalize() {
   const float inv_length = 1.0 / get_length();
@@ -92,7 +89,7 @@ void vector_3::debug(const char * const title) {
   SERIAL_PROTOCOL_F(y, 6);
   SERIAL_PROTOCOLPGM(" z: ");
   SERIAL_PROTOCOL_F(z, 6);
-  SERIAL_EOL();
+  SERIAL_EOL;
 }
 
 void apply_rotation_xyz(matrix_3x3 matrix, float &x, float &y, float &z) {
@@ -146,10 +143,7 @@ matrix_3x3 matrix_3x3::transpose(matrix_3x3 original) {
 }
 
 void matrix_3x3::debug(const char * const title) {
-  if (title != NULL) {
-    serialprintPGM(title);
-    SERIAL_EOL();
-  }
+  serialprintPGM(title);
   uint8_t count = 0;
   for (uint8_t i = 0; i < 3; i++) {
     for (uint8_t j = 0; j < 3; j++) {
@@ -158,8 +152,9 @@ void matrix_3x3::debug(const char * const title) {
       SERIAL_PROTOCOLCHAR(' ');
       count++;
     }
-    SERIAL_EOL();
+    SERIAL_EOL;
   }
 }
 
 #endif // HAS_ABL
+

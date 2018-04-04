@@ -24,7 +24,7 @@
  * Ukrainian
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_UK_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_D0D1                // For Cyrillic
 #define DISPLAY_CHARSET_ISO10646_5
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" готовий.")
 #define MSG_SD_INSERTED                     _UxGT("Картка вставлена")
@@ -49,6 +48,7 @@
 #define MSG_LEVEL_BED_WAITING               _UxGT("Почати")
 #define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Слідуюча Точка")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Завершено!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Відміна")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Зберегти паркув.")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Зміщення застос.")
 #define MSG_SET_ORIGIN                      _UxGT("Встанов. початок")
@@ -68,7 +68,6 @@
 #define MSG_EXTRUDE                         _UxGT("Екструзія")
 #define MSG_RETRACT                         _UxGT("Втягування")
 #define MSG_MOVE_AXIS                       _UxGT("Рух по осям")
-#define MSG_BED_LEVELING                    _UxGT("Нівелювання столу")
 #define MSG_LEVEL_BED                       _UxGT("Нівелювання столу")
 #define MSG_MOVE_X                          _UxGT("Рух по X")
 #define MSG_MOVE_Y                          _UxGT("Рух по Y")
@@ -96,16 +95,9 @@
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_SELECT                          _UxGT("Вибрати")
 #define MSG_ACC                             _UxGT("Приск.")
-#define MSG_JERK                            _UxGT("Ривок")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Va-ривок")
-  #define MSG_VB_JERK                       _UxGT("Vb-ривок")
-  #define MSG_VC_JERK                       _UxGT("Vc-ривок")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vx-ривок")
-  #define MSG_VB_JERK                       _UxGT("Vy-ривок")
-  #define MSG_VC_JERK                       _UxGT("Vz-ривок")
-#endif
+#define MSG_VX_JERK                         _UxGT("Vx-ривок")
+#define MSG_VY_JERK                         _UxGT("Vy-ривок")
+#define MSG_VZ_JERK                         _UxGT("Vz-ривок")
 #define MSG_VE_JERK                         _UxGT("Ve-ривок")
 #define MSG_VMAX                            _UxGT("Vмакс")
 #define MSG_VMIN                            _UxGT("Vмін")
@@ -113,16 +105,9 @@
 #define MSG_AMAX                            _UxGT("Aмакс ")
 #define MSG_A_RETRACT                       _UxGT("A-втягув.")
 #define MSG_A_TRAVEL                        _UxGT("A-руху")
-#define MSG_STEPS_PER_MM                    _UxGT("Кроків/мм")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Aкроків/мм")
-  #define MSG_BSTEPS                        _UxGT("Bкроків/мм")
-  #define MSG_CSTEPS                        _UxGT("Cкроків/мм")
-#else
-  #define MSG_ASTEPS                        _UxGT("Xкроків/мм")
-  #define MSG_BSTEPS                        _UxGT("Yкроків/мм")
-  #define MSG_CSTEPS                        _UxGT("Zкроків/мм")
-#endif
+#define MSG_XSTEPS                          _UxGT("Xкроків/мм")
+#define MSG_YSTEPS                          _UxGT("Yкроків/мм")
+#define MSG_ZSTEPS                          _UxGT("Zкроків/мм")
 #define MSG_ESTEPS                          _UxGT("Eкроків/мм")
 #define MSG_E1STEPS                         _UxGT("E1кроків/мм")
 #define MSG_E2STEPS                         _UxGT("E2кроків/мм")
@@ -169,7 +154,7 @@
 #define MSG_ENDSTOP_ABORT                   _UxGT("невдача кінцевика")
 #define MSG_HEATING_FAILED_LCD              _UxGT("Невдалий нагрів")
 #define MSG_THERMAL_RUNAWAY                 _UxGT("ЗБІЙ ТЕМПЕРАТУРИ")
-#define MSG_ERR_Z_HOMING                    MSG_HOME _UxGT(" ") MSG_X MSG_Y _UxGT(" ") MSG_FIRST
+#define MSG_ERR_Z_HOMING                    _UxGT("G28 Z Відмовлено")
 #define MSG_HALTED                          _UxGT("ПРИНТЕР ЗУПИНЕНО")
 #define MSG_PLEASE_RESET                    _UxGT("Перезавантажте")
 #define MSG_SHORT_DAY                       _UxGT("д") // One character only
@@ -193,7 +178,8 @@
 #define MSG_INFO_EXTRUDERS                  _UxGT("Екструдери")
 #define MSG_INFO_BAUDRATE                   _UxGT("біт/с")
 #define MSG_INFO_PROTOCOL                   _UxGT("Протокол")
-#define MSG_CASE_LIGHT                      _UxGT("Підсвітка")
+#define MSG_LIGHTS_ON                       _UxGT("Підсвітка увік.")
+#define MSG_LIGHTS_OFF                      _UxGT("Підсвітка вимк.")
 
 #if LCD_WIDTH >= 20
   #define MSG_INFO_PRINT_COUNT              _UxGT("К-сть друків")
@@ -217,6 +203,9 @@
 #define MSG_DAC_PERCENT                     _UxGT("% мотору")
 #define MSG_DAC_EEPROM_WRITE                _UxGT("Запис ЦАП на ПЗП")
 
+#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("ЗАМІНА ВОЛОКНА")
+#define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("НАЛАШТ. ЗАМІНИ:")
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Екструдувати")
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Відновити друк")
 
 #if LCD_HEIGHT >= 4
@@ -231,6 +220,9 @@
   #define MSG_FILAMENT_CHANGE_INSERT_3        _UxGT("продовження...")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Зачекайте на")
   #define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("ввід волокна")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Зачекайте на")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("екструзію")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_3       _UxGT("волокна")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Зачекайте на")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("відновлення")
   #define MSG_FILAMENT_CHANGE_RESUME_3        _UxGT("друку")
@@ -240,6 +232,7 @@
   #define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Вивід...")
   #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Вставте і нат.")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Ввід...")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Екструзія...")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Відновлення...")
 #endif // LCD_HEIGHT < 4
 

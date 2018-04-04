@@ -24,16 +24,15 @@
  * Portuguese
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_PT_H
 #define LANGUAGE_PT_H
 
 #define DISPLAY_CHARSET_ISO10646_1
-#define NOT_EXTENDED_ISO10646_1_5X7
 
-#define WELCOME_MSG                         MACHINE_NAME " pronta."
+#define WELCOME_MSG                         MACHINE_NAME " pronto."
 #define MSG_SD_INSERTED                     "Cartao inserido"
 #define MSG_SD_REMOVED                      "Cartao removido"
 #define MSG_MAIN                            "Menu principal"
@@ -47,6 +46,7 @@
 #define MSG_LEVEL_BED_WAITING               "Click para iniciar"
 #define MSG_LEVEL_BED_NEXT_POINT            "Proximo ponto"
 #define MSG_LEVEL_BED_DONE                  "Pronto !"
+#define MSG_LEVEL_BED_CANCEL                "Cancelar"
 #define MSG_SET_HOME_OFFSETS                "Definir desvio"
 #define MSG_HOME_OFFSETS_APPLIED            "Offsets applied"
 #define MSG_SET_ORIGIN                      "Definir origem"
@@ -91,16 +91,9 @@
 #define MSG_PID_D                           "PID-D"
 #define MSG_PID_C                           "PID-C"
 #define MSG_ACC                             "Acc"
-#define MSG_JERK                            "Jerk"
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       "Va-jerk"
-  #define MSG_VB_JERK                       "Vb-jerk"
-  #define MSG_VC_JERK                       "Vc-jerk"
-#else
-  #define MSG_VA_JERK                       "Vx-jerk"
-  #define MSG_VB_JERK                       "Vy-jerk"
-  #define MSG_VC_JERK                       "Vz-jerk"
-#endif
+#define MSG_VX_JERK                         "Vx-jerk"
+#define MSG_VY_JERK                         "Vy-jerk"
+#define MSG_VZ_JERK                         "Vz-jerk"
 #define MSG_VE_JERK                         "Ve-jerk"
 #define MSG_VMAX                            " Vmax "
 #define MSG_VMIN                            "Vmin"
@@ -108,16 +101,9 @@
 #define MSG_AMAX                            "Amax "
 #define MSG_A_RETRACT                       "A-retraccao"
 #define MSG_A_TRAVEL                        "A-movimento"
-#define MSG_STEPS_PER_MM                    "Passo/mm"
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        "A passo/mm"
-  #define MSG_BSTEPS                        "B passo/mm"
-  #define MSG_CSTEPS                        "C passo/mm"
-#else
-  #define MSG_ASTEPS                        "X passo/mm"
-  #define MSG_BSTEPS                        "Y passo/mm"
-  #define MSG_CSTEPS                        "Z passo/mm"
-#endif
+#define MSG_XSTEPS                          "X passo/mm"
+#define MSG_YSTEPS                          "Y passo/mm"
+#define MSG_ZSTEPS                          "Z passo/mm"
 #define MSG_ESTEPS                          "E passo/mm"
 #define MSG_E1STEPS                         "E1 passo/mm"
 #define MSG_E2STEPS                         "E2 passo/mm"

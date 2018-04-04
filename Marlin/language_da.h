@@ -24,7 +24,7 @@
  * Danish
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_DA_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_C2C3
 #define DISPLAY_CHARSET_ISO10646_1
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" er klar")
 #define MSG_SD_INSERTED                     _UxGT("Kort isat")
@@ -49,6 +48,7 @@
 #define MSG_LEVEL_BED_WAITING               _UxGT("Klik når du er klar")
 #define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Næste punkt")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Bed level er færdig!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Annuller bed level")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Sæt forsk. af home")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Forsk. er nu aktiv")
 #define MSG_SET_ORIGIN                      _UxGT("Sæt origin")
@@ -68,7 +68,6 @@
 #define MSG_EXTRUDE                         _UxGT("Extruder")
 #define MSG_RETRACT                         _UxGT("Retract")
 #define MSG_MOVE_AXIS                       _UxGT("Flyt akser")
-#define MSG_BED_LEVELING                    _UxGT("Juster bed")
 #define MSG_LEVEL_BED                       _UxGT("Juster bed")
 #define MSG_MOVE_X                          _UxGT("Flyt X")
 #define MSG_MOVE_Y                          _UxGT("Flyt Y")
@@ -97,16 +96,9 @@
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_SELECT                          _UxGT("Vælg")
 #define MSG_ACC                             _UxGT("Accel")
-#define MSG_JERK                            _UxGT("Jerk")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Va-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vb-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vc-jerk")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vx-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vy-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vz-jerk")
-#endif
+#define MSG_VX_JERK                         _UxGT("Vx-jerk")
+#define MSG_VY_JERK                         _UxGT("Vy-jerk")
+#define MSG_VZ_JERK                         _UxGT("Vz-jerk")
 #define MSG_VE_JERK                         _UxGT("Ve-jerk")
 #define MSG_VMAX                            _UxGT("Vmax ")
 #define MSG_VMIN                            _UxGT("Vmin")
@@ -114,16 +106,9 @@
 #define MSG_AMAX                            _UxGT("Amax ")
 #define MSG_A_RETRACT                       _UxGT("A-retract")
 #define MSG_A_TRAVEL                        _UxGT("A-rejse")
-#define MSG_STEPS_PER_MM                    _UxGT("Steps/mm")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Asteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Bsteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Csteps/mm")
-#else
-  #define MSG_ASTEPS                        _UxGT("Xsteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Ysteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Zsteps/mm")
-#endif
+#define MSG_XSTEPS                          _UxGT("Xsteps/mm")
+#define MSG_YSTEPS                          _UxGT("Ysteps/mm")
+#define MSG_ZSTEPS                          _UxGT("Zsteps/mm")
 #define MSG_ESTEPS                          _UxGT("Esteps/mm")
 #define MSG_E1STEPS                         _UxGT("E1steps/mm")
 #define MSG_E2STEPS                         _UxGT("E2steps/mm")
@@ -183,7 +168,7 @@
 #define MSG_ERR_MINTEMP                     _UxGT("Fejl: Min temp")
 #define MSG_ERR_MAXTEMP_BED                 _UxGT("Fejl: Maks Plade temp")
 #define MSG_ERR_MINTEMP_BED                 _UxGT("Fejl: Min Plade temp")
-#define MSG_ERR_Z_HOMING                    MSG_HOME _UxGT(" ") MSG_X MSG_Y _UxGT(" ") MSG_FIRST
+#define MSG_ERR_Z_HOMING                    _UxGT("G28 Z Forbudt")
 #define MSG_HALTED                          _UxGT("PRINTER STOPPET")
 #define MSG_PLEASE_RESET                    _UxGT("Reset Venligst")
 #define MSG_SHORT_DAY                       _UxGT("d") // Kun et bogstav
@@ -230,6 +215,9 @@
 #define MSG_DAC_PERCENT                     _UxGT("Driv %")
 #define MSG_DAC_EEPROM_WRITE                _UxGT("DAC EEPROM Skriv")
 
+#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("SKIFT FILAMENT")
+#define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("Skift muligheder:")
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Extruder mere")
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Forsæt print")
 
 #if LCD_HEIGHT >= 4
@@ -243,6 +231,8 @@
   #define MSG_FILAMENT_CHANGE_INSERT_3        _UxGT("for at fortsætte...")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Vent på")
   #define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("filament indtag")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Vent på")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("filament extrudering")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Vent på at print")
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("fortsætter")
 #else // LCD_HEIGHT < 4
@@ -250,6 +240,7 @@
   #define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Udskyder...")
   #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Indsæt og klik")
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Indtager...")
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Extrudere...")
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Fortsætter...")
 #endif // LCD_HEIGHT < 4
 

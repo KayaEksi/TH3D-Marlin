@@ -20,23 +20,21 @@
  *
  */
 
+#include "Marlin.h"
 #include "stopwatch.h"
 
-#include "Marlin.h"
-
-Stopwatch::State Stopwatch::state;
-millis_t Stopwatch::accumulator;
-millis_t Stopwatch::startTimestamp;
-millis_t Stopwatch::stopTimestamp;
+Stopwatch::Stopwatch() {
+  this->reset();
+}
 
 bool Stopwatch::stop() {
   #if ENABLED(DEBUG_STOPWATCH)
     Stopwatch::debug(PSTR("stop"));
   #endif
 
-  if (isRunning() || isPaused()) {
-    state = STOPPED;
-    stopTimestamp = millis();
+  if (this->isRunning() || this->isPaused()) {
+    this->state = STOPPED;
+    this->stopTimestamp = millis();
     return true;
   }
   else return false;
@@ -47,9 +45,9 @@ bool Stopwatch::pause() {
     Stopwatch::debug(PSTR("pause"));
   #endif
 
-  if (isRunning()) {
-    state = PAUSED;
-    stopTimestamp = millis();
+  if (this->isRunning()) {
+    this->state = PAUSED;
+    this->stopTimestamp = millis();
     return true;
   }
   else return false;
@@ -60,12 +58,12 @@ bool Stopwatch::start() {
     Stopwatch::debug(PSTR("start"));
   #endif
 
-  if (!isRunning()) {
-    if (isPaused()) accumulator = duration();
-    else reset();
+  if (!this->isRunning()) {
+    if (this->isPaused()) this->accumulator = this->duration();
+    else this->reset();
 
-    state = RUNNING;
-    startTimestamp = millis();
+    this->state = RUNNING;
+    this->startTimestamp = millis();
     return true;
   }
   else return false;
@@ -76,23 +74,23 @@ void Stopwatch::reset() {
     Stopwatch::debug(PSTR("reset"));
   #endif
 
-  state = STOPPED;
-  startTimestamp = 0;
-  stopTimestamp = 0;
-  accumulator = 0;
+  this->state = STOPPED;
+  this->startTimestamp = 0;
+  this->stopTimestamp = 0;
+  this->accumulator = 0;
 }
 
 bool Stopwatch::isRunning() {
-  return (state == RUNNING) ? true : false;
+  return (this->state == RUNNING) ? true : false;
 }
 
 bool Stopwatch::isPaused() {
-  return (state == PAUSED) ? true : false;
+  return (this->state == PAUSED) ? true : false;
 }
 
 millis_t Stopwatch::duration() {
-  return (((isRunning()) ? millis() : stopTimestamp)
-          - startTimestamp) / 1000UL + accumulator;
+  return (((this->isRunning()) ? millis() : this->stopTimestamp)
+          - this->startTimestamp) / 1000UL + this->accumulator;
 }
 
 #if ENABLED(DEBUG_STOPWATCH)

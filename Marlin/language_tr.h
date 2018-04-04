@@ -24,7 +24,7 @@
  * Turkish
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_TR_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_C2C3_TR
 #define DISPLAY_CHARSET_ISO10646_TR
-#define CHARSIZE 2
 
 #if DISABLED(DOGLCD)
   #error "Turkish needs a graphical display."
@@ -56,6 +55,7 @@
 #define MSG_LEVEL_BED_WAITING               _UxGT("Başlatmak için tıkla")                               // Başlatmak için tıkla
 #define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Sıradaki Nokta")                                     // Sıradaki Nokta
 #define MSG_LEVEL_BED_DONE                  _UxGT("Seviyeleme Tamam!")                                  // Seviyeleme Tamam!
+#define MSG_LEVEL_BED_CANCEL                _UxGT("İptal")                                              // İptal
 #define MSG_SET_HOME_OFFSETS                _UxGT("Offset Ayarla")                                      // Offset Ayarla
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Offset Tamam")                                       // Offset Tamam
 #define MSG_SET_ORIGIN                      _UxGT("Sıfır Belirle")                                      // Sıfır Belirle
@@ -77,7 +77,6 @@
 #define MSG_EXTRUDE                         _UxGT("Extrude")                                            // Extrude
 #define MSG_RETRACT                         _UxGT("Geri Çek")                                           // Geri Çek
 #define MSG_MOVE_AXIS                       _UxGT("Eksen Yönet")                                        // Eksenleri Yönet
-#define MSG_BED_LEVELING                    _UxGT("Tabla Seviyele")                                     // Tabla Seviyele
 #define MSG_LEVEL_BED                       _UxGT("Tabla Seviyele")                                     // Tabla Seviyele
 #define MSG_MOVING                          _UxGT("Konumlanıyor...")                                    // Konumlanıyor...
 #define MSG_FREE_XY                         _UxGT("Durdur XY")                                          // Durdur XY
@@ -107,16 +106,9 @@
 #define MSG_PID_C                           _UxGT("PID-C")                                              // PID-C
 #define MSG_SELECT                          _UxGT("Seç")                                                // Seç
 #define MSG_ACC                             _UxGT("İvme")                                               // İvme
-#define MSG_JERK                            _UxGT("Jerk")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Va-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vb-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vc-jerk")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vx-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vy-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vz-jerk")
-#endif
+#define MSG_VX_JERK                         _UxGT("Vx-Jerk")                                            // Vx-Jerk
+#define MSG_VY_JERK                         _UxGT("Vy-Jerk")                                            // Vy-Jerk
+#define MSG_VZ_JERK                         _UxGT("Vz-jerk")                                            // Vz-Jerk
 #define MSG_VE_JERK                         _UxGT("Ve-jerk")                                            // Ve-Jerk
 #define MSG_VMAX                            _UxGT("Vmax ")                                              // Vmax
 #define MSG_VMIN                            _UxGT("Vmin")                                               // Vmin
@@ -124,16 +116,9 @@
 #define MSG_AMAX                            _UxGT("Amax ")                                              // Amax
 #define MSG_A_RETRACT                       _UxGT("A-retract")                                          // A-retract
 #define MSG_A_TRAVEL                        _UxGT("A-travel")                                           // A-travel
-#define MSG_STEPS_PER_MM                    _UxGT("Steps/mm")                                           // Steps/mm
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Asteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Bsteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Csteps/mm")
-#else
-  #define MSG_ASTEPS                        _UxGT("Xsteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Ysteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Zsteps/mm")
-#endif
+#define MSG_XSTEPS                          _UxGT("Xsteps/mm")                                          // Xsteps/mm
+#define MSG_YSTEPS                          _UxGT("Ysteps/mm")                                          // Ysteps/mm
+#define MSG_ZSTEPS                          _UxGT("Zsteps/mm")                                          // Zsteps/mm
 #define MSG_ESTEPS                          _UxGT("Esteps/mm")                                          // Esteps/mm
 #define MSG_E1STEPS                         _UxGT("E1steps/mm")                                         // E1steps/mm
 #define MSG_E2STEPS                         _UxGT("E2steps/mm")                                         // E2steps/mm
@@ -194,7 +179,7 @@
 #define MSG_ERR_MINTEMP                     _UxGT("Hata: MINSICAKLIK")                                  // Hata: MINSICAKLIK
 #define MSG_ERR_MAXTEMP_BED                 _UxGT("Hata: MAXSIC. TABLA")                                // Hata: MAXSIC. TABLA
 #define MSG_ERR_MINTEMP_BED                 _UxGT("Hata: MINSIC. TABLA")                                // Hata: MINSIC. TABLA
-#define MSG_ERR_Z_HOMING                    MSG_HOME _UxGT(" ") MSG_X MSG_Y _UxGT(" ") MSG_FIRST
+#define MSG_ERR_Z_HOMING                    _UxGT("G28 Z Yapılamaz")                                    // G28 Z Yapılamaz
 #define MSG_HALTED                          _UxGT("YAZICI DURDURULDU")                                  // YAZICI DURDURULDU
 #define MSG_PLEASE_RESET                    _UxGT("Lütfen resetleyin")                                  // Lütfen resetleyin
 #define MSG_SHORT_DAY                       _UxGT("G") // One character only                            // G
@@ -219,7 +204,8 @@
 #define MSG_INFO_EXTRUDERS                  _UxGT("Ekstruderler")                                       // Ekstruderler
 #define MSG_INFO_BAUDRATE                   _UxGT("İletişim Hızı")                                      // İletişim Hızı
 #define MSG_INFO_PROTOCOL                   _UxGT("Protokol")                                           // Protokol
-#define MSG_CASE_LIGHT                      _UxGT("Aydınlatmayı")                                       // Aydınlatmayı Aç
+#define MSG_LIGHTS_ON                       _UxGT("Aydınlatmayı Aç")                                    // Aydınlatmayı Aç
+#define MSG_LIGHTS_OFF                      _UxGT("Aydınlatmayı Kapa")                                  // Aydınlaymayı Kapa
 
 #if LCD_WIDTH >= 20
   #define MSG_INFO_PRINT_COUNT              _UxGT("Baskı Sayısı")                                       // Baskı Sayısı
@@ -241,8 +227,12 @@
 
 #define MSG_DRIVE_STRENGTH                  _UxGT("Sürücü Gücü")                                        // Sürücü Gücü
 #define MSG_DAC_PERCENT                     _UxGT("Sürücü %")                                           // Sürücü %
+#define MSG_DAC_EEPROM_WRITE                _UxGT("DAC'ı EEPROM'a Yaz")                                 // DAC'ı EEPROM'a Yaz
+#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("Filaman Değiştir")                                   // Filaman Değiştir
 #define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("Seçenekler:")                                        // Seçenekler:
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Daha Akıt")                                          // Daha Akıt
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Baskıyı sürdür")                                     // Baskıyı sürdür
+#define MSG_FILAMENT_CHANGE_MINTEMP         _UxGT("Min. Sıcaklık")                                      // Min. Sıcaklık:
 #define MSG_FILAMENT_CHANGE_NOZZLE          _UxGT("  Nozül: ")                                          //   Nozül:
 
 #if LCD_HEIGHT >= 4
@@ -261,6 +251,8 @@
   #define MSG_FILAMENT_CHANGE_HEATING_2       _UxGT("Lütfen Bekleyin...")                               // Lütfen Bekleyin...
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Bekleniyor")                                       // Bekleniyor
   #define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("filamanın yüklenmesi")                             // filamanın yüklenmesi
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Bekleniyor")                                       // Bekleniyor
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("filaman akması")                                   // filaman akması
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Baskının sürdürülmesini")                          // Baskının sürdürülmesini
   #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("bekle")                                            // bekle
 #else // LCD_HEIGHT < 4
@@ -269,6 +261,7 @@
   #define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Çıkartılıyor...")                                  // Çıkartılıyor...
   #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Yükle ve bas")                                     // Yükle ve bas
   #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Yüklüyor...")                                      // Yüklüyor...
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Akıtılıyor...")                                    // Akıtılıyor...
   #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Sürdürülüyor...")                                  // Sürdürülüyor...
 #endif // LCD_HEIGHT < 4
 

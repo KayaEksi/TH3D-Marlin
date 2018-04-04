@@ -27,7 +27,6 @@
 #include "macros.h"
 
 #define OVERSAMPLENR 16
-#define OV(N) int16_t((N)*(OVERSAMPLENR))
 
 #define ANY_THERMISTOR_IS(n) (THERMISTORHEATER_0 == n || THERMISTORHEATER_1 == n || THERMISTORHEATER_2 == n || THERMISTORHEATER_3 == n || THERMISTORHEATER_4 == n || THERMISTORBED == n)
 
@@ -39,7 +38,7 @@
 #define PtB -5.775E-7
 #define PtRt(T,R0) ((R0)*(1.0+(PtA)*(T)+(PtB)*(T)*(T)))
 #define PtAdVal(T,R0,Rup) (short)(1024/(Rup/PtRt(T,R0)+1))
-#define PtLine(T,R0,Rup) { OV(PtAdVal(T,R0,Rup)), T },
+#define PtLine(T,R0,Rup) { PtAdVal(T,R0,Rup)*OVERSAMPLENR, T },
 
 #if ANY_THERMISTOR_IS(1) // 100k bed thermistor
   #include "thermistortable_1.h"
@@ -80,9 +79,6 @@
 #if ANY_THERMISTOR_IS(13) // Hisens thermistor B25/50 =3950 +/-1%
   #include "thermistortable_13.h"
 #endif
-#if ANY_THERMISTOR_IS(15) // JGAurora A5 thermistor calibration
-  #include "thermistortable_15.h"
-#endif
 #if ANY_THERMISTOR_IS(20) // PT100 with INA826 amp on Ultimaker v2.0 electronics
   #include "thermistortable_20.h"
 #endif
@@ -93,7 +89,7 @@
   #include "thermistortable_52.h"
 #endif
 #if ANY_THERMISTOR_IS(55) // 100k ATC Semitec 104GT-2 (Used on ParCan) (WITH 1kohm RESISTOR FOR PULLUP, R9 ON SANGUINOLOLU! NOT FOR 4.7kohm PULLUP! THIS IS NOT NORMAL!)
-  #include "thermistortable_55.h"
+  #include "thermistortable_53.h"
 #endif
 #if ANY_THERMISTOR_IS(60) // Maker's Tool Works Kapton Bed Thermistor
   #include "thermistortable_60.h"

@@ -58,7 +58,6 @@
 #include <Arduino.h>
 
 #include "servo.h"
-#include "utility.h"
 
 #define usToTicks(_us)    (( clockCyclesPerMicrosecond()* _us) / 8)     // converts microseconds to tick (assumes prescale of 8)  // 12 Aug 2009
 #define ticksToUs(_ticks) (( (unsigned)_ticks * 8)/ clockCyclesPerMicrosecond() ) // converts from ticks back to microseconds
@@ -96,7 +95,7 @@ static inline void handle_interrupts(timer16_Sequence_t timer, volatile uint16_t
   if (SERVO_INDEX(timer, Channel[timer]) < ServoCount && Channel[timer] < SERVOS_PER_TIMER) {
     *OCRnA = *TCNTn + SERVO(timer, Channel[timer]).ticks;
     if (SERVO(timer, Channel[timer]).Pin.isActive)    // check if activated
-      digitalWrite(SERVO(timer, Channel[timer]).Pin.nbr, HIGH); // it's an active channel so pulse it high
+      digitalWrite(SERVO(timer, Channel[timer]).Pin.nbr, HIGH); // its an active channel so pulse it high
   }
   else {
     // finished all channels so wait for the refresh period to expire before starting over
@@ -222,7 +221,7 @@ static void finISR(timer16_Sequence_t timer) {
           , OCIE3A);    // disable the timer3 output compare A interrupt
       timerDetach(TIMER3OUTCOMPAREA_INT);
     }
-  #else // !WIRING
+  #else //!WIRING
     // For arduino - in future: call here to a currently undefined function to reset the timer
     UNUSED(timer);
   #endif
@@ -237,6 +236,7 @@ static bool isTimerActive(timer16_Sequence_t timer) {
   return false;
 }
 
+
 /****************** end of static functions ******************************/
 
 Servo::Servo() {
@@ -248,11 +248,11 @@ Servo::Servo() {
     this->servoIndex = INVALID_SERVO;  // too many servos
 }
 
-int8_t Servo::attach(const int pin) {
+int8_t Servo::attach(int pin) {
   return this->attach(pin, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
 }
 
-int8_t Servo::attach(const int pin, const int min, const int max) {
+int8_t Servo::attach(int pin, int min, int max) {
 
   if (this->servoIndex >= MAX_SERVOS) return -1;
 
@@ -307,16 +307,14 @@ int Servo::readMicroseconds() {
 
 bool Servo::attached() { return servo_info[this->servoIndex].Pin.isActive; }
 
-void Servo::move(const int value) {
-  constexpr uint16_t servo_delay[] = SERVO_DELAY;
-  static_assert(COUNT(servo_delay) == NUM_SERVOS, "SERVO_DELAY must be an array NUM_SERVOS long.");
+void Servo::move(int value) {
   if (this->attach(0) >= 0) {
     this->write(value);
-    safe_delay(servo_delay[this->servoIndex]);
+    delay(SERVO_DELAY);
     #if ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
       this->detach();
     #endif
   }
 }
 
-#endif // HAS_SERVOS
+#endif

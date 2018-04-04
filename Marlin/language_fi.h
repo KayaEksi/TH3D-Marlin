@@ -24,7 +24,7 @@
  * Finnish
  *
  * LCD Menu Messages
- * See also http://marlinfw.org/docs/development/lcd_language.html
+ * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
  *
  */
 #ifndef LANGUAGE_FI_H
@@ -32,7 +32,6 @@
 
 #define MAPPER_C2C3
 #define DISPLAY_CHARSET_ISO10646_1
-#define CHARSIZE 2
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" valmis.")
 #define MSG_SD_INSERTED                     _UxGT("Kortti asetettu")
@@ -44,6 +43,7 @@
 #define MSG_LEVEL_BED_HOMING                _UxGT("Homing XYZ")
 #define MSG_LEVEL_BED_WAITING               _UxGT("Click to Begin")
 #define MSG_LEVEL_BED_DONE                  _UxGT("Leveling Done!")
+#define MSG_LEVEL_BED_CANCEL                _UxGT("Cancel")
 #define MSG_SET_HOME_OFFSETS                _UxGT("Set home offsets")
 #define MSG_HOME_OFFSETS_APPLIED            _UxGT("Offsets applied")
 #define MSG_SET_ORIGIN                      _UxGT("Aseta origo")
@@ -87,33 +87,18 @@
 #define MSG_PID_D                           _UxGT("PID-D")
 #define MSG_PID_C                           _UxGT("PID-C")
 #define MSG_ACC                             _UxGT("Kiihtyv")
-#define MSG_JERK                            _UxGT("Jerk")
-#if IS_KINEMATIC
-  #define MSG_VA_JERK                       _UxGT("Va-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vb-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vc-jerk")
-#else
-  #define MSG_VA_JERK                       _UxGT("Vx-jerk")
-  #define MSG_VB_JERK                       _UxGT("Vy-jerk")
-  #define MSG_VC_JERK                       _UxGT("Vz-jerk")
-#endif
+#define MSG_VX_JERK                         _UxGT("Vx-jerk")
+#define MSG_VY_JERK                         _UxGT("Vy-jerk")
+#define MSG_VZ_JERK                         _UxGT("Vz-jerk")
 #define MSG_VE_JERK                         _UxGT("Ve-jerk")
 #define MSG_VMAX                            _UxGT("Vmax ")
 #define MSG_VMIN                            _UxGT("Vmin")
 #define MSG_VTRAV_MIN                       _UxGT("VLiike min")
-#define MSG_ACCELERATION                    MSG_ACC
 #define MSG_AMAX                            _UxGT("Amax ")
 #define MSG_A_RETRACT                       _UxGT("A-peruuta")
-#define MSG_STEPS_PER_MM                    _UxGT("Steps/mm")
-#if IS_KINEMATIC
-  #define MSG_ASTEPS                        _UxGT("Asteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Bsteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Csteps/mm")
-#else
-  #define MSG_ASTEPS                        _UxGT("Xsteps/mm")
-  #define MSG_BSTEPS                        _UxGT("Ysteps/mm")
-  #define MSG_CSTEPS                        _UxGT("Zsteps/mm")
-#endif
+#define MSG_XSTEPS                          _UxGT("Xsteps/mm")
+#define MSG_YSTEPS                          _UxGT("Ysteps/mm")
+#define MSG_ZSTEPS                          _UxGT("Zsteps/mm")
 #define MSG_ESTEPS                          _UxGT("Esteps/mm")
 #define MSG_E1STEPS                         _UxGT("E1steps/mm")
 #define MSG_E2STEPS                         _UxGT("E2steps/mm")

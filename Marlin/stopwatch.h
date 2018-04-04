@@ -23,11 +23,10 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
+#include "macros.h"
+
 // Print debug messages with M111 S2 (Uses 156 bytes of PROGMEM)
 //#define DEBUG_STOPWATCH
-
-#include "macros.h"
-#include "types.h"
 
 /**
  * @brief Stopwatch class
@@ -36,22 +35,22 @@
  */
 class Stopwatch {
   private:
-    enum State : char {
+    enum State {
       STOPPED,
       RUNNING,
       PAUSED
     };
 
-    static Stopwatch::State state;
-    static millis_t accumulator;
-    static millis_t startTimestamp;
-    static millis_t stopTimestamp;
+    Stopwatch::State state;
+    millis_t accumulator;
+    millis_t startTimestamp;
+    millis_t stopTimestamp;
 
   public:
     /**
-     * @brief Initialize the stopwatch
+     * @brief Class constructor
      */
-    FORCE_INLINE static void init() { reset(); }
+    Stopwatch();
 
     /**
      * @brief Stops the stopwatch
@@ -59,60 +58,60 @@ class Stopwatch {
      * no timer is currently running.
      * @return true is method was successful
      */
-    static bool stop();
+    bool stop();
 
     /**
      * @brief Pause the stopwatch
-     * @details Pause the running timer, it will silently ignore the request if
+     * @details Pauses the running timer, it will silently ignore the request if
      * no timer is currently running.
      * @return true is method was successful
      */
-    static bool pause();
+    bool pause();
 
     /**
-     * @brief Start the stopwatch
-     * @details Start the timer, it will silently ignore the request if the
+     * @brief Starts the stopwatch
+     * @details Starts the timer, it will silently ignore the request if the
      * timer is already running.
      * @return true is method was successful
      */
-    static bool start();
+    bool start();
 
     /**
-     * @brief Reset the stopwatch
-     * @details Reset all settings to their default values.
+     * @brief Resets the stopwatch
+     * @details Resets all settings to their default values.
      */
-    static void reset();
+    void reset();
 
     /**
-     * @brief Check if the timer is running
-     * @details Return true if the timer is currently running, false otherwise.
+     * @brief Checks if the timer is running
+     * @details Returns true if the timer is currently running, false otherwise.
      * @return true if stopwatch is running
      */
-    static bool isRunning();
+    bool isRunning();
 
     /**
-     * @brief Check if the timer is paused
-     * @details Return true if the timer is currently paused, false otherwise.
+     * @brief Checks if the timer is paused
+     * @details Returns true if the timer is currently paused, false otherwise.
      * @return true if stopwatch is paused
      */
-    static bool isPaused();
+    bool isPaused();
 
     /**
-     * @brief Get the running time
-     * @details Return the total number of seconds the timer has been running.
+     * @brief Gets the running time
+     * @details Returns the total number of seconds the timer has been running.
      * @return the delta since starting the stopwatch
      */
-    static millis_t duration();
+    millis_t duration();
 
-    #ifdef DEBUG_STOPWATCH
+    #if ENABLED(DEBUG_STOPWATCH)
 
       /**
-       * @brief Print a debug message
-       * @details Print a simple debug message "Stopwatch::function"
+       * @brief Prints a debug message
+       * @details Prints a simple debug message "Stopwatch::function"
        */
       static void debug(const char func[]);
 
     #endif
 };
 
-#endif // STOPWATCH_H
+#endif //STOPWATCH_H

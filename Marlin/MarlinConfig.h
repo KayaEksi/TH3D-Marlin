@@ -31,13 +31,11 @@
 #include "Conditionals_LCD.h"
 #include "Configuration_adv.h"
 #include "pins.h"
-#if defined(__AVR__) && !defined(USBCON)
+#ifndef USBCON
   #define HardwareSerial_h // trick to disable the standard HWserial
 #endif
 #include "Arduino.h"
 #include "Conditionals_post.h"
 #include "SanityCheck.h"
-
-#include <avr/pgmspace.h>
 
 #endif // MARLIN_CONFIG_H
