@@ -1,26 +1,14 @@
-/**
- * Marlin 3D Printer Firmware
- * Copyright (C) 2016 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
- *
- * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+// Tonokip RepRap firmware rewrite based off of Hydra-mmm firmware.
+// License: GPL
+
 #ifndef MARLIN_H
 #define MARLIN_H
+
+#define  FORCE_INLINE __attribute__((always_inline)) inline
+/**
+ * Compiler warning on unused varable.
+ */
+#define UNUSED(x) (void) (x)
 
 #include <math.h>
 #include <stdio.h>
@@ -33,172 +21,220 @@
 #include <avr/eeprom.h>
 #include <avr/interrupt.h>
 
-#include "MarlinConfig.h"
 
-#ifdef DEBUG_GCODE_PARSER
-  #include "gcode.h"
-#endif
-
-#include "enum.h"
-#include "types.h"
 #include "fastio.h"
-#include "utility.h"
-#include "serial.h"
+#include "Configuration.h"
+#include "pins.h"
 
-#if ENABLED(PRINTCOUNTER)
-  #include "printcounter.h"
-#else
-  #include "stopwatch.h"
+#ifndef SANITYCHECK_H
+  #error Your Configuration.h and Configuration_adv.h files are outdated!
 #endif
 
-void idle(
-  #if ENABLED(ADVANCED_PAUSE_FEATURE)
-    bool no_stepper_sleep = false  // pass true to keep steppers from disabling on timeout
-  #endif
-);
+#include "Arduino.h"
+
+typedef unsigned long millis_t;
+
+// Arduino < 1.0.0 does not define this, so we need to do it ourselves
+#ifndef analogInputToDigitalPin
+  #define analogInputToDigitalPin(p) ((p) + 0xA0)
+#endif
+
+#ifdef USBCON
+  #include "HardwareSerial.h"
+#endif
+
+#include "MarlinSerial.h"
+
+#ifndef cbi
+  #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
+#ifndef sbi
+  #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+#endif
+
+#include "WString.h"
+
+#ifdef USBCON
+  #if ENABLED(BLUETOOTH)
+    #define MYSERIAL bluetoothSerial
+  #else
+    #define MYSERIAL Serial
+  #endif // BLUETOOTH
+#else
+  #define MYSERIAL customizedSerial
+#endif
+
+#define SERIAL_CHAR(x) MYSERIAL.write(x)
+#define SERIAL_EOL SERIAL_CHAR('\n')
+
+#define SERIAL_PROTOCOLCHAR(x) SERIAL_CHAR(x)
+#define SERIAL_PROTOCOL(x) MYSERIAL.print(x)
+#define SERIAL_PROTOCOL_F(x,y) MYSERIAL.print(x,y)
+#define SERIAL_PROTOCOLPGM(x) serialprintPGM(PSTR(x))
+#define SERIAL_PROTOCOLLN(x) do{ MYSERIAL.print(x); SERIAL_EOL; }while(0)
+#define SERIAL_PROTOCOLLNPGM(x) do{ serialprintPGM(PSTR(x)); SERIAL_EOL; }while(0)
+
+
+extern const char errormagic[] PROGMEM;
+extern const char echomagic[] PROGMEM;
+
+#define SERIAL_ERROR_START serialprintPGM(errormagic)
+#define SERIAL_ERROR(x) SERIAL_PROTOCOL(x)
+#define SERIAL_ERRORPGM(x) SERIAL_PROTOCOLPGM(x)
+#define SERIAL_ERRORLN(x) SERIAL_PROTOCOLLN(x)
+#define SERIAL_ERRORLNPGM(x) SERIAL_PROTOCOLLNPGM(x)
+
+#define SERIAL_ECHO_START serialprintPGM(echomagic)
+#define SERIAL_ECHO(x) SERIAL_PROTOCOL(x)
+#define SERIAL_ECHOPGM(x) SERIAL_PROTOCOLPGM(x)
+#define SERIAL_ECHOLN(x) SERIAL_PROTOCOLLN(x)
+#define SERIAL_ECHOLNPGM(x) SERIAL_PROTOCOLLNPGM(x)
+
+#define SERIAL_ECHOPAIR(name,value) do{ serial_echopair_P(PSTR(name),(value)); }while(0)
+
+void serial_echopair_P(const char* s_P, int v);
+void serial_echopair_P(const char* s_P, long v);
+void serial_echopair_P(const char* s_P, float v);
+void serial_echopair_P(const char* s_P, double v);
+void serial_echopair_P(const char* s_P, unsigned long v);
+
+
+// Things to write to serial from Program memory. Saves 400 to 2k of RAM.
+FORCE_INLINE void serialprintPGM(const char* str) {
+  char ch;
+  while ((ch = pgm_read_byte(str))) {
+    MYSERIAL.write(ch);
+    str++;
+  }
+}
+
+void get_command();
+
+void idle(); // the standard idle routine calls manage_inactivity(false)
 
 void manage_inactivity(bool ignore_stepper_queue = false);
 
-#if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
-  extern bool extruder_duplication_enabled;
-#endif
-
-#if HAS_X2_ENABLE
-  #define  enable_X() do{ X_ENABLE_WRITE( X_ENABLE_ON); X2_ENABLE_WRITE( X_ENABLE_ON); }while(0)
-  #define disable_X() do{ X_ENABLE_WRITE(!X_ENABLE_ON); X2_ENABLE_WRITE(!X_ENABLE_ON); axis_known_position[X_AXIS] = false; }while(0)
+#if ENABLED(DUAL_X_CARRIAGE) && HAS_X_ENABLE && HAS_X2_ENABLE
+  #define  enable_x() do { X_ENABLE_WRITE( X_ENABLE_ON); X2_ENABLE_WRITE( X_ENABLE_ON); } while (0)
+  #define disable_x() do { X_ENABLE_WRITE(!X_ENABLE_ON); X2_ENABLE_WRITE(!X_ENABLE_ON); axis_known_position[X_AXIS] = false; } while (0)
 #elif HAS_X_ENABLE
-  #define  enable_X() X_ENABLE_WRITE( X_ENABLE_ON)
-  #define disable_X() do{ X_ENABLE_WRITE(!X_ENABLE_ON); axis_known_position[X_AXIS] = false; }while(0)
+  #define  enable_x() X_ENABLE_WRITE( X_ENABLE_ON)
+  #define disable_x() { X_ENABLE_WRITE(!X_ENABLE_ON); axis_known_position[X_AXIS] = false; }
 #else
-  #define  enable_X() NOOP
-  #define disable_X() NOOP
+  #define enable_x() ;
+  #define disable_x() ;
 #endif
 
-#if HAS_Y2_ENABLE
-  #define  enable_Y() do{ Y_ENABLE_WRITE( Y_ENABLE_ON); Y2_ENABLE_WRITE(Y_ENABLE_ON); }while(0)
-  #define disable_Y() do{ Y_ENABLE_WRITE(!Y_ENABLE_ON); Y2_ENABLE_WRITE(!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }while(0)
-#elif HAS_Y_ENABLE
-  #define  enable_Y() Y_ENABLE_WRITE( Y_ENABLE_ON)
-  #define disable_Y() do{ Y_ENABLE_WRITE(!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }while(0)
+#if HAS_Y_ENABLE
+  #if ENABLED(Y_DUAL_STEPPER_DRIVERS)
+    #define  enable_y() { Y_ENABLE_WRITE( Y_ENABLE_ON); Y2_ENABLE_WRITE(Y_ENABLE_ON); }
+    #define disable_y() { Y_ENABLE_WRITE(!Y_ENABLE_ON); Y2_ENABLE_WRITE(!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }
+  #else
+    #define  enable_y() Y_ENABLE_WRITE( Y_ENABLE_ON)
+    #define disable_y() { Y_ENABLE_WRITE(!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }
+  #endif
 #else
-  #define  enable_Y() NOOP
-  #define disable_Y() NOOP
+  #define enable_y() ;
+  #define disable_y() ;
 #endif
 
-#if HAS_Z2_ENABLE
-  #define  enable_Z() do{ Z_ENABLE_WRITE( Z_ENABLE_ON); Z2_ENABLE_WRITE(Z_ENABLE_ON); }while(0)
-  #define disable_Z() do{ Z_ENABLE_WRITE(!Z_ENABLE_ON); Z2_ENABLE_WRITE(!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }while(0)
-#elif HAS_Z_ENABLE
-  #define  enable_Z() Z_ENABLE_WRITE( Z_ENABLE_ON)
-  #define disable_Z() do{ Z_ENABLE_WRITE(!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }while(0)
+#if HAS_Z_ENABLE
+  #if ENABLED(Z_DUAL_STEPPER_DRIVERS)
+    #define  enable_z() { Z_ENABLE_WRITE( Z_ENABLE_ON); Z2_ENABLE_WRITE(Z_ENABLE_ON); }
+    #define disable_z() { Z_ENABLE_WRITE(!Z_ENABLE_ON); Z2_ENABLE_WRITE(!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }
+  #else
+    #define  enable_z() Z_ENABLE_WRITE( Z_ENABLE_ON)
+    #define disable_z() { Z_ENABLE_WRITE(!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }
+  #endif
 #else
-  #define  enable_Z() NOOP
-  #define disable_Z() NOOP
+  #define enable_z() ;
+  #define disable_z() ;
 #endif
 
-#if ENABLED(MIXING_EXTRUDER)
+#if HAS_E0_ENABLE
+  #define enable_e0()  E0_ENABLE_WRITE( E_ENABLE_ON)
+  #define disable_e0() E0_ENABLE_WRITE(!E_ENABLE_ON)
+#else
+  #define enable_e0()  /* nothing */
+  #define disable_e0() /* nothing */
+#endif
 
-  /**
-   * Mixing steppers synchronize their enable (and direction) together
-   */
-  #if MIXING_STEPPERS > 3
-    #define  enable_E0() { E0_ENABLE_WRITE( E_ENABLE_ON); E1_ENABLE_WRITE( E_ENABLE_ON); E2_ENABLE_WRITE( E_ENABLE_ON); E3_ENABLE_WRITE( E_ENABLE_ON); }
-    #define disable_E0() { E0_ENABLE_WRITE(!E_ENABLE_ON); E1_ENABLE_WRITE(!E_ENABLE_ON); E2_ENABLE_WRITE(!E_ENABLE_ON); E3_ENABLE_WRITE(!E_ENABLE_ON); }
-  #elif MIXING_STEPPERS > 2
-    #define  enable_E0() { E0_ENABLE_WRITE( E_ENABLE_ON); E1_ENABLE_WRITE( E_ENABLE_ON); E2_ENABLE_WRITE( E_ENABLE_ON); }
-    #define disable_E0() { E0_ENABLE_WRITE(!E_ENABLE_ON); E1_ENABLE_WRITE(!E_ENABLE_ON); E2_ENABLE_WRITE(!E_ENABLE_ON); }
-  #else
-    #define  enable_E0() { E0_ENABLE_WRITE( E_ENABLE_ON); E1_ENABLE_WRITE( E_ENABLE_ON); }
-    #define disable_E0() { E0_ENABLE_WRITE(!E_ENABLE_ON); E1_ENABLE_WRITE(!E_ENABLE_ON); }
-  #endif
-  #define  enable_E1() NOOP
-  #define disable_E1() NOOP
-  #define  enable_E2() NOOP
-  #define disable_E2() NOOP
-  #define  enable_E3() NOOP
-  #define disable_E3() NOOP
-  #define  enable_E4() NOOP
-  #define disable_E4() NOOP
+#if (EXTRUDERS > 1) && HAS_E1_ENABLE
+  #define enable_e1()  E1_ENABLE_WRITE( E_ENABLE_ON)
+  #define disable_e1() E1_ENABLE_WRITE(!E_ENABLE_ON)
+#else
+  #define enable_e1()  /* nothing */
+  #define disable_e1() /* nothing */
+#endif
 
-#else // !MIXING_EXTRUDER
+#if (EXTRUDERS > 2) && HAS_E2_ENABLE
+  #define enable_e2()  E2_ENABLE_WRITE( E_ENABLE_ON)
+  #define disable_e2() E2_ENABLE_WRITE(!E_ENABLE_ON)
+#else
+  #define enable_e2()  /* nothing */
+  #define disable_e2() /* nothing */
+#endif
 
-  #if HAS_E0_ENABLE
-    #define  enable_E0() E0_ENABLE_WRITE( E_ENABLE_ON)
-    #define disable_E0() E0_ENABLE_WRITE(!E_ENABLE_ON)
-  #else
-    #define  enable_E0() NOOP
-    #define disable_E0() NOOP
-  #endif
-
-  #if E_STEPPERS > 1 && HAS_E1_ENABLE
-    #define  enable_E1() E1_ENABLE_WRITE( E_ENABLE_ON)
-    #define disable_E1() E1_ENABLE_WRITE(!E_ENABLE_ON)
-  #else
-    #define  enable_E1() NOOP
-    #define disable_E1() NOOP
-  #endif
-
-  #if E_STEPPERS > 2 && HAS_E2_ENABLE
-    #define  enable_E2() E2_ENABLE_WRITE( E_ENABLE_ON)
-    #define disable_E2() E2_ENABLE_WRITE(!E_ENABLE_ON)
-  #else
-    #define  enable_E2() NOOP
-    #define disable_E2() NOOP
-  #endif
-
-  #if E_STEPPERS > 3 && HAS_E3_ENABLE
-    #define  enable_E3() E3_ENABLE_WRITE( E_ENABLE_ON)
-    #define disable_E3() E3_ENABLE_WRITE(!E_ENABLE_ON)
-  #else
-    #define  enable_E3() NOOP
-    #define disable_E3() NOOP
-  #endif
-
-  #if E_STEPPERS > 4 && HAS_E4_ENABLE
-    #define  enable_E4() E4_ENABLE_WRITE( E_ENABLE_ON)
-    #define disable_E4() E4_ENABLE_WRITE(!E_ENABLE_ON)
-  #else
-    #define  enable_E4() NOOP
-    #define disable_E4() NOOP
-  #endif
-
-#endif // !MIXING_EXTRUDER
-
-#if ENABLED(G38_PROBE_TARGET)
-  extern bool G38_move,        // flag to tell the interrupt handler that a G38 command is being run
-              G38_endstop_hit; // flag from the interrupt handler to indicate if the endstop went active
+#if (EXTRUDERS > 3) && HAS_E3_ENABLE
+  #define enable_e3()  E3_ENABLE_WRITE( E_ENABLE_ON)
+  #define disable_e3() E3_ENABLE_WRITE(!E_ENABLE_ON)
+#else
+  #define enable_e3()  /* nothing */
+  #define disable_e3() /* nothing */
 #endif
 
 /**
  * The axis order in all axis related arrays is X, Y, Z, E
  */
-#define _AXIS(AXIS) AXIS ##_AXIS
+#define NUM_AXIS 4
+
+/**
+ * Axis indices as enumerated constants
+ *
+ * A_AXIS and B_AXIS are used by COREXY printers
+ * X_HEAD and Y_HEAD is used for systems that don't have a 1:1 relationship between X_AXIS and X Head movement, like CoreXY bots.
+ */
+enum AxisEnum {X_AXIS = 0, A_AXIS = 0, Y_AXIS = 1, B_AXIS = 1, Z_AXIS = 2, C_AXIS = 2, E_AXIS = 3, X_HEAD = 4, Y_HEAD = 5, Z_HEAD = 5};
+
+enum EndstopEnum {X_MIN = 0, Y_MIN = 1, Z_MIN = 2, Z_MIN_PROBE = 3, X_MAX = 4, Y_MAX = 5, Z_MAX = 6, Z2_MIN = 7, Z2_MAX = 8};
 
 void enable_all_steppers();
-void disable_e_steppers();
 void disable_all_steppers();
 
 void FlushSerialRequestResend();
 void ok_to_send();
 
+void reset_bed_level();
+void prepare_move();
 void kill(const char*);
-
-void quickstop_stepper();
+void Stop();
 
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  void handle_filament_runout();
+  void filrunout();
 #endif
 
+/**
+ * Debug flags - not yet widely applied
+ */
+enum DebugFlags {
+  DEBUG_ECHO          = BIT(0),
+  DEBUG_INFO          = BIT(1),
+  DEBUG_ERRORS        = BIT(2),
+  DEBUG_DRYRUN        = BIT(3),
+  DEBUG_COMMUNICATION = BIT(4),
+  DEBUG_LEVELING      = BIT(5)
+};
 extern uint8_t marlin_debug_flags;
-#define DEBUGGING(F) (marlin_debug_flags & (DEBUG_## F))
 
 extern bool Running;
 inline bool IsRunning() { return  Running; }
 inline bool IsStopped() { return !Running; }
 
-bool enqueue_and_echo_command(const char* cmd, bool say_ok=false); // Add a single command to the end of the buffer. Return false on failure.
-void enqueue_and_echo_commands_P(const char * const cmd);          // Set one or more commands to be prioritized over the next Serial/SD command.
-void clear_command_queue();
+bool enqueuecommand(const char* cmd); //put a single ASCII command at the end of the current buffer or return false when it is full
+void enqueuecommands_P(const char* cmd); //put one or many ASCII commands at the end of the current buffer, read from flash
+
+void prepare_arc_move(char isclockwise);
+void clamp_to_software_endstops(float target[3]);
 
 extern millis_t previous_cmd_ms;
 inline void refresh_cmd_timeout() { previous_cmd_ms = millis(); }
@@ -207,336 +243,118 @@ inline void refresh_cmd_timeout() { previous_cmd_ms = millis(); }
   void setPwmFrequency(uint8_t pin, int val);
 #endif
 
-/**
- * Feedrate scaling and conversion
- */
-extern float feedrate_mm_s;
-extern int16_t feedrate_percentage;
-
-#define MMS_SCALED(MM_S) ((MM_S)*feedrate_percentage*0.01)
+#ifndef CRITICAL_SECTION_START
+  #define CRITICAL_SECTION_START  unsigned char _sreg = SREG; cli();
+  #define CRITICAL_SECTION_END    SREG = _sreg;
+#endif
 
 extern bool axis_relative_modes[];
-extern bool axis_known_position[XYZ];
-extern bool axis_homed[XYZ];
-extern volatile bool wait_for_heatup;
-
-#if HAS_RESUME_CONTINUE
-  extern volatile bool wait_for_user;
-#endif
-
-extern float current_position[XYZE], destination[XYZE];
-
-// Workspace offsets
-#if HAS_WORKSPACE_OFFSET
-  #if HAS_HOME_OFFSET
-    extern float home_offset[XYZ];
-  #endif
-  #if HAS_POSITION_SHIFT
-    extern float position_shift[XYZ];
-  #endif
-#endif
-
-#if HAS_HOME_OFFSET && HAS_POSITION_SHIFT
-  extern float workspace_offset[XYZ];
-  #define WORKSPACE_OFFSET(AXIS) workspace_offset[AXIS]
-#elif HAS_HOME_OFFSET
-  #define WORKSPACE_OFFSET(AXIS) home_offset[AXIS]
-#elif HAS_POSITION_SHIFT
-  #define WORKSPACE_OFFSET(AXIS) position_shift[AXIS]
-#else
-  #define WORKSPACE_OFFSET(AXIS) 0
-#endif
-
-#define NATIVE_TO_LOGICAL(POS, AXIS) ((POS) + WORKSPACE_OFFSET(AXIS))
-#define LOGICAL_TO_NATIVE(POS, AXIS) ((POS) - WORKSPACE_OFFSET(AXIS))
-
-#if HAS_POSITION_SHIFT || DISABLED(DELTA)
-  #define LOGICAL_X_POSITION(POS)   NATIVE_TO_LOGICAL(POS, X_AXIS)
-  #define LOGICAL_Y_POSITION(POS)   NATIVE_TO_LOGICAL(POS, Y_AXIS)
-  #define RAW_X_POSITION(POS)       LOGICAL_TO_NATIVE(POS, X_AXIS)
-  #define RAW_Y_POSITION(POS)       LOGICAL_TO_NATIVE(POS, Y_AXIS)
-#else
-  #define LOGICAL_X_POSITION(POS)   (POS)
-  #define LOGICAL_Y_POSITION(POS)   (POS)
-  #define RAW_X_POSITION(POS)       (POS)
-  #define RAW_Y_POSITION(POS)       (POS)
-#endif
-
-#define LOGICAL_Z_POSITION(POS)     NATIVE_TO_LOGICAL(POS, Z_AXIS)
-#define RAW_Z_POSITION(POS)         LOGICAL_TO_NATIVE(POS, Z_AXIS)
-
-// Hotend Offsets
-#if HOTENDS > 1
-  extern float hotend_offset[XYZ][HOTENDS];
-#endif
-
-// Software Endstops
-extern float soft_endstop_min[XYZ], soft_endstop_max[XYZ];
-
-#if HAS_SOFTWARE_ENDSTOPS
-  extern bool soft_endstops_enabled;
-  void clamp_to_software_endstops(float target[XYZ]);
-#else
-  #define soft_endstops_enabled false
-  #define clamp_to_software_endstops(x) NOOP
-#endif
-
-#if HAS_WORKSPACE_OFFSET || ENABLED(DUAL_X_CARRIAGE)
-  void update_software_endstops(const AxisEnum axis);
-#endif
-
-#if ENABLED(CNC_COORDINATE_SYSTEMS)
-  #define MAX_COORDINATE_SYSTEMS 9
-  extern float coordinate_system[MAX_COORDINATE_SYSTEMS][XYZ];
-  bool select_coordinate_system(const int8_t _new);
-#endif
-
-void report_current_position();
-
-#if IS_KINEMATIC
-  extern float delta[ABC];
-  void inverse_kinematics(const float raw[XYZ]);
-#endif
+extern int feedrate_multiplier;
+extern bool volumetric_enabled;
+extern int extruder_multiplier[EXTRUDERS]; // sets extrude multiply factor (in percent) for each extruder individually
+extern float filament_size[EXTRUDERS]; // cross-sectional area of filament (in millimeters), typically around 1.75 or 2.85, 0 disables the volumetric calculations for the extruder.
+extern float volumetric_multiplier[EXTRUDERS]; // reciprocal of cross-sectional area of filament (in square millimeters), stored this way to reduce computational burden in planner
+extern float current_position[NUM_AXIS];
+extern float home_offset[3]; // axis[n].home_offset
+extern float min_pos[3]; // axis[n].min_pos
+extern float max_pos[3]; // axis[n].max_pos
+extern bool axis_known_position[3]; // axis[n].is_known
 
 #if ENABLED(DELTA)
-  extern float delta_height,
-               delta_endstop_adj[ABC],
-               delta_radius,
-               delta_tower_angle_trim[ABC],
-               delta_tower[ABC][2],
-               delta_diagonal_rod,
-               delta_calibration_radius,
-               delta_diagonal_rod_2_tower[ABC],
-               delta_segments_per_second,
-               delta_clip_start_height;
-
-  void recalc_delta_settings();
-  float delta_safe_distance_from_top();
-
-  #if ENABLED(DELTA_FAST_SQRT)
-    float Q_rsqrt(const float number);
-    #define _SQRT(n) (1.0f / Q_rsqrt(n))
-  #else
-    #define _SQRT(n) SQRT(n)
+  extern float delta[3];
+  extern float endstop_adj[3]; // axis[n].endstop_adj
+  extern float delta_radius;
+  #ifndef DELTA_RADIUS_TRIM_TOWER_1
+    #define DELTA_RADIUS_TRIM_TOWER_1 0.0
   #endif
-
-  // Macro to obtain the Z position of an individual tower
-  #define DELTA_Z(V,T) V[Z_AXIS] + _SQRT(   \
-    delta_diagonal_rod_2_tower[T] - HYPOT2( \
-        delta_tower[T][X_AXIS] - V[X_AXIS], \
-        delta_tower[T][Y_AXIS] - V[Y_AXIS]  \
-      )                                     \
-    )
-
-  #define DELTA_IK(V) do {        \
-    delta[A_AXIS] = DELTA_Z(V, A_AXIS); \
-    delta[B_AXIS] = DELTA_Z(V, B_AXIS); \
-    delta[C_AXIS] = DELTA_Z(V, C_AXIS); \
-  }while(0)
-
-#elif IS_SCARA
-  void forward_kinematics_SCARA(const float &a, const float &b);
+  #ifndef DELTA_RADIUS_TRIM_TOWER_2
+    #define DELTA_RADIUS_TRIM_TOWER_2 0.0
+  #endif
+  #ifndef DELTA_RADIUS_TRIM_TOWER_3
+    #define DELTA_RADIUS_TRIM_TOWER_3 0.0
+  #endif
+  extern float delta_diagonal_rod;
+  #ifndef DELTA_DIAGONAL_ROD_TRIM_TOWER_1
+    #define DELTA_DIAGONAL_ROD_TRIM_TOWER_1 0.0
+  #endif
+  #ifndef DELTA_DIAGONAL_ROD_TRIM_TOWER_2
+    #define DELTA_DIAGONAL_ROD_TRIM_TOWER_2 0.0
+  #endif
+  #ifndef DELTA_DIAGONAL_ROD_TRIM_TOWER_3
+    #define DELTA_DIAGONAL_ROD_TRIM_TOWER_3 0.0
+  #endif
+  extern float delta_segments_per_second;
+  void calculate_delta(float cartesian[3]);
+  void recalc_delta_settings(float radius, float diagonal_rod);
+  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+    extern int delta_grid_spacing[2];
+    void adjust_delta(float cartesian[3]);
+  #endif
+#elif ENABLED(SCARA)
+  extern float axis_scaling[3];  // Build size scaling
+  void calculate_delta(float cartesian[3]);
+  void calculate_SCARA_forward_Transform(float f_scara[3]);
 #endif
 
-#if ENABLED(G26_MESH_VALIDATION)
-  extern bool g26_debug_flag;
-#elif ENABLED(AUTO_BED_LEVELING_UBL)
-  constexpr bool g26_debug_flag = false;
-#endif
-
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-  #define _GET_MESH_X(I) (bilinear_start[X_AXIS] + (I) * bilinear_grid_spacing[X_AXIS])
-  #define _GET_MESH_Y(J) (bilinear_start[Y_AXIS] + (J) * bilinear_grid_spacing[Y_AXIS])
-#elif ENABLED(AUTO_BED_LEVELING_UBL)
-  #define _GET_MESH_X(I) ubl.mesh_index_to_xpos(I)
-  #define _GET_MESH_Y(J) ubl.mesh_index_to_ypos(J)
-#elif ENABLED(MESH_BED_LEVELING)
-  #define _GET_MESH_X(I) mbl.index_to_xpos[I]
-  #define _GET_MESH_Y(J) mbl.index_to_ypos[J]
-#endif
-
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-  extern int bilinear_grid_spacing[2], bilinear_start[2];
-  extern float bilinear_grid_factor[2],
-               z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
-  float bilinear_z_offset(const float raw[XYZ]);
-#endif
-
-#if ENABLED(AUTO_BED_LEVELING_UBL)
-  typedef struct { double A, B, D; } linear_fit;
-  linear_fit* lsf_linear_fit(double x[], double y[], double z[], const int);
-#endif
-
-#if HAS_LEVELING
-  bool leveling_is_valid();
-  void set_bed_leveling_enabled(const bool enable=true);
-  void reset_bed_level();
-#endif
-
-#if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-  void set_z_fade_height(const float zfh, const bool do_report=true);
-#endif
-
-#if ENABLED(X_DUAL_ENDSTOPS)
-  extern float x_endstop_adj;
-#endif
-#if ENABLED(Y_DUAL_ENDSTOPS)
-  extern float y_endstop_adj;
-#endif
 #if ENABLED(Z_DUAL_ENDSTOPS)
   extern float z_endstop_adj;
 #endif
 
-#if HAS_BED_PROBE
+#if ENABLED(AUTO_BED_LEVELING_FEATURE)
   extern float zprobe_zoffset;
-  #define DEPLOY_PROBE() set_probe_deployed(true)
-  #define STOW_PROBE() set_probe_deployed(false)
-#else
-  #define DEPLOY_PROBE()
-  #define STOW_PROBE()
 #endif
 
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
-  extern MarlinBusyState busy_state;
-  #define KEEPALIVE_STATE(n) do{ busy_state = n; }while(0)
-#else
-  #define KEEPALIVE_STATE(n) NOOP
+#if ENABLED(PREVENT_DANGEROUS_EXTRUDE)
+  extern float extrude_min_temp;
 #endif
 
-#if FAN_COUNT > 0
-  extern int16_t fanSpeeds[FAN_COUNT];
-  #if ENABLED(EXTRA_FAN_SPEED)
-    extern int16_t old_fanSpeeds[FAN_COUNT],
-                   new_fanSpeeds[FAN_COUNT];
-  #endif
-  #if ENABLED(PROBING_FANS_OFF)
-    extern bool fans_paused;
-    extern int16_t paused_fanSpeeds[FAN_COUNT];
-  #endif
-#endif
+extern int fanSpeed;
 
 #if ENABLED(BARICUDA)
-  extern uint8_t baricuda_valve_pressure, baricuda_e_to_p_pressure;
+  extern int ValvePressure;
+  extern int EtoPPressure;
 #endif
 
-#if ENABLED(FILAMENT_WIDTH_SENSOR)
-  extern bool filament_sensor;         // Flag that filament sensor readings should control extrusion
-  extern float filament_width_nominal, // Theoretical filament diameter i.e., 3.00 or 1.75
-               filament_width_meas;    // Measured filament diameter
-  extern uint8_t meas_delay_cm;        // Delay distance
-  extern int8_t measurement_delay[MAX_MEASUREMENT_DELAY + 1],  // Ring buffer to delay measurement
-                filwidth_delay_index[2]; // Ring buffer indexes. Used by planner, temperature, and main code
+#if ENABLED(FAN_SOFT_PWM)
+  extern unsigned char fanSpeedSoftPwm;
 #endif
 
-#if ENABLED(ADVANCED_PAUSE_FEATURE)
-  extern AdvancedPauseMenuResponse advanced_pause_menu_response;
+#if ENABLED(FILAMENT_SENSOR)
+  extern float filament_width_nominal;  //holds the theoretical filament diameter ie., 3.00 or 1.75
+  extern bool filament_sensor;  //indicates that filament sensor readings should control extrusion
+  extern float filament_width_meas; //holds the filament diameter as accurately measured
+  extern signed char measurement_delay[];  //ring buffer to delay measurement
+  extern int delay_index1, delay_index2;  //ring buffer index. used by planner, temperature, and main code
+  extern float delay_dist; //delay distance counter
+  extern int meas_delay_cm; //delay distance
 #endif
 
-#if ENABLED(PID_EXTRUSION_SCALING)
+#if ENABLED(PID_ADD_EXTRUSION_RATE)
   extern int lpq_len;
 #endif
 
 #if ENABLED(FWRETRACT)
-  extern bool autoretract_enabled;                 // M209 S - Autoretract switch
-  extern float retract_length,                     // M207 S - G10 Retract length
-               retract_feedrate_mm_s,              // M207 F - G10 Retract feedrate
-               retract_zlift,                      // M207 Z - G10 Retract hop size
-               retract_recover_length,             // M208 S - G11 Recover length
-               retract_recover_feedrate_mm_s,      // M208 F - G11 Recover feedrate
-               swap_retract_length,                // M207 W - G10 Swap Retract length
-               swap_retract_recover_length,        // M208 W - G11 Swap Recover length
-               swap_retract_recover_feedrate_mm_s; // M208 R - G11 Swap Recover feedrate
+  extern bool autoretract_enabled;
+  extern bool retracted[EXTRUDERS]; // extruder[n].retracted
+  extern float retract_length, retract_length_swap, retract_feedrate, retract_zlift;
+  extern float retract_recover_length, retract_recover_length_swap, retract_recover_feedrate;
 #endif
 
-// Print job timer
-#if ENABLED(PRINTCOUNTER)
-  extern PrintCounter print_job_timer;
-#else
-  extern Stopwatch print_job_timer;
-#endif
+extern millis_t print_job_start_ms;
+extern millis_t print_job_stop_ms;
 
 // Handling multiple extruders pins
 extern uint8_t active_extruder;
 
-#if ENABLED(MIXING_EXTRUDER)
-  extern float mixing_factor[MIXING_STEPPERS];
+#if ENABLED(DIGIPOT_I2C)
+  extern void digipot_i2c_set_current(int channel, float current);
+  extern void digipot_i2c_init();
 #endif
 
-inline void set_current_from_destination() { COPY(current_position, destination); }
-inline void set_destination_from_current() { COPY(destination, current_position); }
-void prepare_move_to_destination();
+extern void calculate_volumetric_multipliers();
 
-/**
- * Blocking movement and shorthand functions
- */
-void do_blocking_move_to(const float &x, const float &y, const float &z, const float &fr_mm_s=0.0);
-void do_blocking_move_to_x(const float &x, const float &fr_mm_s=0.0);
-void do_blocking_move_to_z(const float &z, const float &fr_mm_s=0.0);
-void do_blocking_move_to_xy(const float &x, const float &y, const float &fr_mm_s=0.0);
-
-#define HAS_AXIS_UNHOMED_ERR (                                                     \
-         ENABLED(Z_PROBE_ALLEN_KEY)                                                \
-      || ENABLED(Z_PROBE_SLED)                                                     \
-      || HAS_PROBING_PROCEDURE                                                     \
-      || HOTENDS > 1                                                               \
-      || ENABLED(NOZZLE_CLEAN_FEATURE)                                             \
-      || ENABLED(NOZZLE_PARK_FEATURE)                                              \
-      || (ENABLED(ADVANCED_PAUSE_FEATURE) && ENABLED(HOME_BEFORE_FILAMENT_CHANGE)) \
-      || HAS_M206_COMMAND                                                          \
-    ) || ENABLED(NO_MOTION_BEFORE_HOMING)
-
-#if HAS_AXIS_UNHOMED_ERR
-  bool axis_unhomed_error(const bool x=true, const bool y=true, const bool z=true);
+#if ENABLED(SDSUPPORT) && ENABLED(POWEROFF_SAVE_SD_FILE)
+void init_power_off_info();
 #endif
 
-/**
- * position_is_reachable family of functions
- */
-
-#if IS_KINEMATIC // (DELTA or SCARA)
-
-  #if IS_SCARA
-    extern const float L1, L2;
-  #endif
-
-  inline bool position_is_reachable(const float &rx, const float &ry) {
-    #if ENABLED(DELTA)
-      return HYPOT2(rx, ry) <= sq(DELTA_PRINTABLE_RADIUS);
-    #elif IS_SCARA
-      #if MIDDLE_DEAD_ZONE_R > 0
-        const float R2 = HYPOT2(rx - SCARA_OFFSET_X, ry - SCARA_OFFSET_Y);
-        return R2 >= sq(float(MIDDLE_DEAD_ZONE_R)) && R2 <= sq(L1 + L2);
-      #else
-        return HYPOT2(rx - SCARA_OFFSET_X, ry - SCARA_OFFSET_Y) <= sq(L1 + L2);
-      #endif
-    #else // CARTESIAN
-      // To be migrated from MakerArm branch in future
-    #endif
-  }
-
-  inline bool position_is_reachable_by_probe(const float &rx, const float &ry) {
-
-    // Both the nozzle and the probe must be able to reach the point.
-    // This won't work on SCARA since the probe offset rotates with the arm.
-
-    return position_is_reachable(rx, ry)
-        && position_is_reachable(rx - (X_PROBE_OFFSET_FROM_EXTRUDER), ry - (Y_PROBE_OFFSET_FROM_EXTRUDER));
-  }
-
-#else // CARTESIAN
-
-  inline bool position_is_reachable(const float &rx, const float &ry) {
-      // Add 0.001 margin to deal with float imprecision
-      return WITHIN(rx, X_MIN_POS - 0.001, X_MAX_POS + 0.001)
-          && WITHIN(ry, Y_MIN_POS - 0.001, Y_MAX_POS + 0.001);
-  }
-
-  inline bool position_is_reachable_by_probe(const float &rx, const float &ry) {
-      // Add 0.001 margin to deal with float imprecision
-      return WITHIN(rx, MIN_PROBE_X - 0.001, MAX_PROBE_X + 0.001)
-          && WITHIN(ry, MIN_PROBE_Y - 0.001, MAX_PROBE_Y + 0.001);
-  }
-
-#endif // CARTESIAN
-
-#endif // MARLIN_H
+#endif //MARLIN_H
