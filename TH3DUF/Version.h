@@ -35,7 +35,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "TH3D U1.R1.1"
+  #define SHORT_BUILD_VERSION "TH3D U1.R2.A1"
 
   /**
    * Verbose version identifier which should contain a reference to the location
@@ -57,8 +57,8 @@
    * but not limited to: ADD, DELETE RENAME OR REPURPOSE any directive/option on
    * the configuration files.
    */
-  #define REQUIRED_CONFIGURATION_H_VERSION 010110
-  #define REQUIRED_CONFIGURATION_ADV_H_VERSION 010110
+  #define REQUIRED_CONFIGURATION_H_VERSION 010107
+  #define REQUIRED_CONFIGURATION_ADV_H_VERSION 010107
 
   /**
    * The protocol for communication to the host. Protocol indicates communication
