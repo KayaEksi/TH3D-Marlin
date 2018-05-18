@@ -283,7 +283,7 @@
 //#define EZABL_FASTPROBE
 
 // This can help if you have a shaky Z axis or can help with AC bed interference.
-// This will add a 500MS delay before the probe starts.
+// This will add a 500MS delay before the probe starts - only use if directed to by support.
 //#define EZABL_STABILIZE
 
 // If you are having leveling issues with the EZABL try uncommenting the below
